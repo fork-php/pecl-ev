@@ -248,7 +248,7 @@ static zval * php_ev_read_property(zval *object, zval *member, int type, void **
 			retval = &EG(uninitialized_zval);
 		}
 	} else {
-		zend_object_handlers *std_hnd = zend_get_std_object_handlers();
+		const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
 		retval = std_hnd->read_property(object, member, type, cache_slot, rv);
 	}
 
@@ -282,7 +282,7 @@ static void php_ev_write_property(zval *object, zval *member, zval *value, void 
 	if (hnd) {
 	    hnd->write_func(obj, value);
 	} else {
-	    zend_object_handlers *std_hnd = zend_get_std_object_handlers();
+	    const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
 	    std_hnd->write_property(object, member, value, cache_slot);
 	}
 
@@ -326,7 +326,7 @@ static int php_ev_has_property(zval *object, zval *member, int has_set_exists, v
 				   php_error_docref(NULL, E_WARNING, "Invalid value for has_set_exists");
 		}
 	} else {
-		zend_object_handlers *std_hnd = zend_get_std_object_handlers();
+		const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
 		ret = std_hnd->has_property(object, member, has_set_exists, cache_slot);
 	}
 
@@ -460,7 +460,7 @@ static zval * php_ev_get_property_ptr_ptr(zval *object, zval *member, int type, 
 	if (hnd && hnd->get_ptr_ptr_func != NULL) {
 		retval = hnd->get_ptr_ptr_func(obj);
 	} else {
-		zend_object_handlers *std_hnd = zend_get_std_object_handlers();
+		const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
 		retval = std_hnd->get_property_ptr_ptr(object, member, type, cache_slot);
 	}
 
@@ -626,8 +626,6 @@ static void php_ev_object_free_storage(zend_object *object)
 	zend_object_std_dtor(&intern->zo);
 	PHP_EV_EFREE(intern->ptr);
 #if 0
-	efree(intern);
-#else
 	OBJ_RELEASE(object);
 #endif
 }
@@ -1108,7 +1106,7 @@ static PHP_GINIT_FUNCTION(ev)
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(ev)
 {
-	zend_object_handlers *std_hnd = zend_get_std_object_handlers();
+	const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
 
 	memcpy(&ev_object_handlers, std_hnd, sizeof(zend_object_handlers));
 	ev_object_handlers.offset               = XtOffsetOf(php_ev_object, zo);

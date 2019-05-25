@@ -13,10 +13,10 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2017-10-24</date>
+  <date>2019-05-25</date>
   <!--{{{ Current version -->
   <version>
-    <release>1.0.5</release>
+    <release>1.0.6</release>
     <api>0.3.0</api>
   </version>
   <stability>
@@ -25,7 +25,8 @@
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    Fixed bug #33 in PHP 7 where the return value of EvPeriodic reschedule callback was ignored
+    Fixed #35: Segmentation Fault / Assertion Failure with PHP 7.3
+    Fixed build warnings
   ]]></notes>
   <!--}}}-->
   <!--{{{ Contents -->
@@ -156,6 +157,23 @@
   </extsrcrelease>
   <!--{{{ changelog-->
   <changelog>
+    <!--{{{ 1.0.6 -->
+    <release>
+      <version>
+        <release>1.0.6</release>
+        <api>0.3.0</api>
+      </version>
+      <stability>
+        <release>stable</release>
+        <api>stable</api>
+      </stability>
+      <license uri="http://www.php.net/license">PHP</license>
+      <notes><![CDATA[
+    Fixed #35: Segmentation Fault / Assertion Failure with PHP 7.3
+    Fixed build warnings
+  ]]></notes>
+    </release>
+    <!--}}}-->
     <!--{{{ 1.0.5 -->
     <release>
       <version>
