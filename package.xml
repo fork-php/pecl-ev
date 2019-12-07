@@ -13,23 +13,22 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2019-05-25</date>
-  <!--{{{ Current version -->
+  <date>2019-12-07</date>
+  <!-- Current version -->
   <version>
-    <release>1.0.6</release>
+    <release>1.0.7</release>
     <api>0.3.0</api>
   </version>
   <stability>
-    <release>stable</release>
+    <release>beta</release>
     <api>stable</api>
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    Fixed #35: Segmentation Fault / Assertion Failure with PHP 7.3
-    Fixed build warnings
+    - Updated libev
+    - Fixed Windows build by applying a patch suggested by Christoph M. Becker.
   ]]></notes>
-  <!--}}}-->
-  <!--{{{ Contents -->
+  <!-- Contents -->
   <contents>
     <dir name="/">
       <file role="doc" name="CREDITS"/>
@@ -124,7 +123,9 @@
         <file role="src" name="ev.c"/>
         <file role="src" name="ev.h"/>
         <file role="src" name="ev_epoll.c"/>
+        <file role="src" name="ev_iouring.c"/>
         <file role="src" name="ev_kqueue.c"/>
+        <file role="src" name="ev_linuxaio.c"/>
         <file role="src" name="ev_poll.c"/>
         <file role="src" name="ev_port.c"/>
         <file role="src" name="ev_select.c"/>
@@ -135,7 +136,6 @@
       </dir>
     </dir>
   </contents>
-  <!--}}}-->
   <dependencies>
     <required>
       <php>
@@ -144,20 +144,30 @@
       <pearinstaller>
         <min>1.4.0a1</min>
       </pearinstaller>
-      <!--
-      <os>
-        <name>linux</name>
-      </os>
-      -->
     </required>
   </dependencies>
   <providesextension>ev</providesextension>
   <extsrcrelease>
     <configureoption default="no" name="enable-ev-debug" prompt="Enable internal debugging in ev"/>
   </extsrcrelease>
-  <!--{{{ changelog-->
+  <!-- changelog-->
   <changelog>
-    <!--{{{ 1.0.6 -->
+    <!--{{{ 1.0.7-beta -->
+    <version>
+      <release>1.0.7</release>
+      <api>0.3.0</api>
+    </version>
+    <stability>
+      <release>beta</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.php.net/license">PHP</license>
+    <notes><![CDATA[
+    - Updated libev
+    - Fixed Windows build by applying a patch suggested by Christoph M. Becker.
+  ]]></notes>
+    <!--}}}-->
+    <!-- 1.0.6 -->
     <release>
       <version>
         <release>1.0.6</release>
@@ -173,8 +183,7 @@
     Fixed build warnings
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.5 -->
+    <!-- 1.0.5 -->
     <release>
       <version>
         <release>1.0.5</release>
@@ -189,8 +198,7 @@
     Fixed bug #33 in PHP 7 where the return value of EvPeriodic reschedule callback was ignored
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.4 -->
+    <!-- 1.0.4 -->
     <release>
       <version>
         <release>1.0.4</release>
@@ -205,8 +213,7 @@
     Fix: memory leak in PHP 7.0.13
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.3 -->
+    <!-- 1.0.3 -->
     <release>
       <version>
         <release>1.0.3</release>
@@ -221,8 +228,7 @@
     Fix: issue #29 where object properties were wrapped in double quotes
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.2 -->
+    <!-- 1.0.2 -->
     <release>
       <version>
         <release>1.0.2</release>
@@ -237,8 +243,7 @@
     Fix: issue #28 where generator test failed with PHP 5.4
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.1 -->
+    <!-- 1.0.1 -->
     <release>
       <version>
         <release>1.0.1</release>
@@ -253,8 +258,7 @@
     Fix: issue #27 where callbacks with < 2 arguments were rejected
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0 -->
+    <!-- 1.0.0 -->
     <release>
       <version>
         <release>1.0.0</release>
@@ -269,8 +273,7 @@
     Fix: issue #24
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC9 -->
+    <!-- 1.0.0RC9 -->
     <release>
       <version>
         <release>1.0.0RC9</release>
@@ -285,8 +288,7 @@
     Windows package fix
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC7 -->
+    <!-- 1.0.0RC7 -->
     <release>
       <version>
         <release>1.0.0RC7</release>
@@ -301,8 +303,7 @@
     Fixed PECL package
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC6 -->
+    <!-- 1.0.0RC6 -->
     <release>
       <version>
         <release>1.0.0RC6</release>
@@ -317,8 +318,7 @@
     Fixed Windows build
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC5 -->
+    <!-- 1.0.0RC5 -->
     <release>
       <version>
         <release>1.0.0RC5</release>
@@ -333,8 +333,7 @@
     Added Windows support
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC4 -->
+    <!-- 1.0.0RC4 -->
     <release>
       <version>
         <release>1.0.0RC4</release>
@@ -350,8 +349,7 @@
     Change: removed pthreads dependency(pthread_atfork setup for the ev_loop_fork(EV_DEFAULT) call)
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC3-->
+    <!-- 1.0.0RC3-->
     <release>
       <version>
         <release>1.0.0RC3</release>
@@ -366,8 +364,7 @@
     Fix: issue #18
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC2 -->
+    <!-- 1.0.0RC2 -->
     <release>
       <version>
         <release>1.0.0RC2</release>
@@ -385,8 +382,7 @@
     Fix: EvStat::$path property always returned NULL
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 1.0.0RC1 -->
+    <!-- 1.0.0RC1 -->
     <release>
       <version>
         <release>1.0.0RC1</release>
@@ -401,8 +397,7 @@
     Added PHP7 support
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.17 -->
+    <!-- 0.2.17 -->
     <release>
       <version>
         <release>0.2.17</release>
@@ -417,8 +412,7 @@
     EvIo::__construct() and EvIo::set() now throw Exception in case of invalid stream or file descriptor.
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.16 -->
+    <!-- 0.2.16 -->
     <release>
       <version>
         <release>0.2.16</release>
@@ -433,8 +427,7 @@
     Issue #13: Compilation issue in Mac OS X 10.11
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.15 -->
+    <!-- 0.2.15 -->
     <release>
       <version>
         <release>0.2.15</release>
@@ -449,8 +442,7 @@
     Issue #12: marked as CLI-only extension (the changes are actually missing in 0.2.14)
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.13 -->
+    <!-- 0.2.13 -->
     <release>
       <version>
         <release>0.2.13</release>
@@ -465,8 +457,7 @@
     Issue #11: pecl install ev command fails with non-standard PHP installation prefix.
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.12 -->
+    <!-- 0.2.12 -->
     <release>
       <version>
         <release>0.2.12</release>
@@ -481,8 +472,7 @@
         Fixed #10: Segfault in test suite for ZTS (thanks to Remi Collet)
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.11 -->
+    <!-- 0.2.11 -->
     <release>
       <version>
         <release>0.2.11</release>
@@ -500,8 +490,7 @@
   Pulled latest fixes from libev's upstream
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.10 -->
+    <!-- 0.2.10 -->
     <release>
       <version>
         <release>0.2.10</release>
@@ -518,8 +507,7 @@
   Fix: operators applied to uninitialized EvWatcher::data property caused unexpected results
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.9 -->
+    <!-- 0.2.9 -->
     <release>
       <version>
         <release>0.2.9</release>
@@ -535,8 +523,7 @@
   Refact: some frequent checks optimized
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.8 -->
+    <!-- 0.2.8 -->
     <release>
       <version>
         <release>0.2.8</release>
@@ -553,8 +540,7 @@
   Fix: get_properties property handler was not implemented for PHP >= 5.4.0
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.7 -->
+    <!-- 0.2.7 -->
     <release>
       <version>
         <release>0.2.7</release>
@@ -570,8 +556,7 @@
   Change: removed "Returning previously created default loop" warning
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.6 -->
+    <!-- 0.2.6 -->
     <release>
       <version>
         <release>0.2.6</release>
@@ -588,8 +573,7 @@
     Upgraded libev to version 4.15
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.5 -->
+    <!-- 0.2.5 -->
     <version>
       <release>0.2.5</release>
       <api>0.2.0</api>
@@ -603,8 +587,7 @@
   Fix: build error due to return (void) from function returning int on Mac OS X
   Fix: bug #64788 where var_dump() of EvIo watcher caused disfunction of whole event loop
   ]]></notes>
-    <!--}}}-->
-    <!--{{{ 0.2.4 -->
+    <!-- 0.2.4 -->
     <release>
       <version>
         <release>0.2.4</release>
@@ -619,8 +602,7 @@
   Fix: build error in Mac OS X: inline php_ev_set_watcher_priority function had been exported as a library symbol
   ]]></notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.2.3  -->
+    <!-- 0.2.3  -->
     <version>
       <release>0.2.3</release>
       <api>0.2.0</api>
@@ -635,8 +617,7 @@
   Fixed build errors for non-threaded configuration.
   Streams' casting fixed and improved.
   ]]></notes>
-    <!--}}}-->
-    <!--{{{ 0.2.2 -->
+    <!-- 0.2.2 -->
     <version>
       <release>0.2.2</release>
       <api>0.2.0</api>
@@ -652,8 +633,7 @@
   Fix: typo in package.xml
   Fix: markdown syntax
   ]]></notes>
-    <!--}}}-->
-    <!--{{{ 0.2.1 -->
+    <!-- 0.2.1 -->
     <version>
       <release>0.2.1</release>
       <api>0.2.0</api>
@@ -668,8 +648,7 @@
   http://old.nabble.com/Can%27t-get-zval-write-property-handler-working-for-%2B%2B------%2B%2B-and-other-operators-to34843859.html
   Fix: check for attempts to bind a signal to different event loops
   ]]></notes>
-    <!--}}}-->
-    <!--{{{ 0.2.0 -->
+    <!-- 0.2.0 -->
     <version>
       <release>0.2.0</release>
       <api>0.2.0</api>
@@ -688,8 +667,7 @@
   Change: watcher createStopped methods made final
   Change: watcher factory methods made final
   </notes>
-    <!--}}}-->
-    <!--{{{ 0.1.1 (beta) -->
+    <!-- 0.1.1 (beta) -->
     <release>
       <version>
         <release>0.1.1</release>
@@ -704,8 +682,7 @@
     Fix: PECL build error
     </notes>
     </release>
-    <!--}}}-->
-    <!--{{{ 0.1.0 (beta) -->
+    <!-- 0.1.0 (beta) -->
     <release>
       <version>
         <release>0.1.0</release>
@@ -720,8 +697,6 @@
     Initial release
     </notes>
     </release>
-    <!--}}}-->
   </changelog>
-  <!--}}}-->
 </package>
 <!-- vim: set et sts=2 ts=2 sw=2 fdm=marker: -->
