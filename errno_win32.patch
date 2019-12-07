@@ -1,0 +1,61 @@
+# Patch by "Christoph M. Becker" <cmbecker69@gmx.de> Fixes Windows issue where
+# `errno` is defined as macro resolving to `(*_errno())` in the WinSDK[1], so
+# assigning to `errno` is not possible.
+#
+# [1] https://docs.microsoft.com/en-us/cpp/c-runtime-library/errno-doserrno-sys-errlist-and-sys-nerr?view=vs-2019
+--- libev/ev.c	Sat May 25 18:59:51 2019
++++ libev/ev.c	Tue Dec  3 19:08:04 2019
+@@ -2467,7 +2467,11 @@
+ #endif
+         }
+ 
++#ifdef _WIN32
++      _set_errno(old_errno);
++#else
+       errno = old_errno;
++#endif
+     }
+ }
+ 
+--- libev/ev_select.c	Sat May 25 18:59:51 2019
++++ libev/ev_select.c	Tue Dec  3 19:13:33 2019
+@@ -174,15 +174,15 @@
+   if (expect_false (res < 0))
+     {
+       #if EV_SELECT_IS_WINSOCKET
+-      errno = WSAGetLastError ();
++      _set_errno(WSAGetLastError ());
+       #endif
+       #ifdef WSABASEERR
+       /* on windows, select returns incompatible error codes, fix this */
+       if (errno >= WSABASEERR && errno < WSABASEERR + 1000)
+         if (errno == WSAENOTSOCK)
+-          errno = EBADF;
++          _set_errno(EBADF);
+         else
+-          errno -= WSABASEERR;
++          _set_errno(errno - WSABASEERR);
+       #endif
+ 
+       #ifdef _WIN32
+--- libev/ev_win32.c	Sat May 25 18:59:51 2019
++++ libev/ev_win32.c	Tue Dec  3 19:06:12 2019
+@@ -39,6 +39,9 @@
+ 
+ #ifdef _WIN32
+ 
++#include <winsock2.h>
++#include <errno.h>
++
+ /* note: the comment below could not be substantiated, but what would I care */
+ /* MSDN says this is required to handle SIGFPE */
+ /* my wild guess would be that using something floating-pointy is required */
+@@ -111,7 +114,7 @@
+   if (getsockname (sock [1], (struct sockaddr *)&adr2, &adr2_size))
+     goto fail;
+ 
+-  errno = WSAEINVAL;
++  _set_errno(WSAEINVAL);
+   if (addr_size != adr2_size
+       || addr.sin_addr.s_addr != adr2.sin_addr.s_addr /* just to be sure, I mean, it's windows */
+       || addr.sin_port        != adr2.sin_port)

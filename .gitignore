@@ -13,6 +13,8 @@ reconf.sh
 run-tests.php
 tags
 
+/.ccls-cache/
+
 *.tgz
 *.in
 *.l[a,o]

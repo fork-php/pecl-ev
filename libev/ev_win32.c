@@ -39,6 +39,9 @@
 
 #ifdef _WIN32
 
+#include <winsock2.h>
+#include <errno.h>
+
 /* note: the comment below could not be substantiated, but what would I care */
 /* MSDN says this is required to handle SIGFPE */
 /* my wild guess would be that using something floating-pointy is required */
@@ -111,7 +114,7 @@ ev_pipe (int filedes [2])
   if (getsockname (sock [1], (struct sockaddr *)&adr2, &adr2_size))
     goto fail;
 
-  errno = WSAEINVAL;
+  _set_errno(WSAEINVAL);
   if (addr_size != adr2_size
       || addr.sin_addr.s_addr != adr2.sin_addr.s_addr /* just to be sure, I mean, it's windows */
       || addr.sin_port        != adr2.sin_port)
@@ -154,8 +157,8 @@ ev_time (void)
   ui.u.LowPart  = ft.dwLowDateTime;
   ui.u.HighPart = ft.dwHighDateTime;
 
-  /* msvc cannot convert ulonglong to double... yes, it is that sucky */
-  return (LONGLONG)(ui.QuadPart - 116444736000000000) * 1e-7;
+  /* also, msvc cannot convert ulonglong to double... yes, it is that sucky */
+  return EV_TS_FROM_USEC (((LONGLONG)(ui.QuadPart - 116444736000000000) * 1e-1));
 }
 
 #endif
