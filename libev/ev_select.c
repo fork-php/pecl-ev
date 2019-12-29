@@ -174,15 +174,15 @@ select_poll (EV_P_ ev_tstamp timeout)
   if (ecb_expect_false (res < 0))
     {
       #if EV_SELECT_IS_WINSOCKET
-      _set_errno(WSAGetLastError ());
+      errno = WSAGetLastError ();
       #endif
       #ifdef WSABASEERR
       /* on windows, select returns incompatible error codes, fix this */
       if (errno >= WSABASEERR && errno < WSABASEERR + 1000)
         if (errno == WSAENOTSOCK)
-          _set_errno(EBADF);
+          errno = EBADF;
         else
-          _set_errno(errno - WSABASEERR);
+          errno -= WSABASEERR;
       #endif
 
       #ifdef _WIN32

@@ -13,10 +13,10 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2019-12-07</date>
+  <date>2019-12-09</date>
   <!-- Current version -->
   <version>
-    <release>1.0.7</release>
+    <release>1.0.8</release>
     <api>0.3.0</api>
   </version>
   <stability>
@@ -25,8 +25,8 @@
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    - Updated libev
-    - Fixed Windows build by applying a patch suggested by Christoph M. Becker.
+    - Fixed build warnings with PHP 7.4.0-alpha1: &apos;incompatible pointer type&apos; warnings occurred in assignments to the write property handlers (thanks to Remi Collet).
+    - Re-fixed the Windows build errors related to errno in a way that the libev sources are left pristine. (The root of the issue is actually rooted in the PHP code where the errno macro is re-defined.)
   ]]></notes>
   <!-- Contents -->
   <contents>
@@ -152,6 +152,23 @@
   </extsrcrelease>
   <!-- changelog-->
   <changelog>
+    <!--{{{ 1.0.8-beta -->
+    <release>
+      <version>
+        <release>1.0.8</release>
+        <api>0.3.0</api>
+      </version>
+      <stability>
+        <release>beta</release>
+        <api>stable</api>
+      </stability>
+      <license uri="http://www.php.net/license">PHP</license>
+      <notes><![CDATA[
+    - Fixed build warnings with PHP 7.4.0-alpha1: &apos;incompatible pointer type&apos; warnings occurred in assignments to the write property handlers (thanks to Remi Collet).
+    - Re-fixed the Windows build errors related to errno in a way that the libev sources are left pristine. (The root of the issue is actually rooted in the PHP code where the errno macro is re-defined.)
+  ]]></notes>
+    </release>
+    <!--}}}-->
     <!--{{{ 1.0.7-beta -->
     <version>
       <release>1.0.7</release>

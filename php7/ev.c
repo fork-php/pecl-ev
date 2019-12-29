@@ -261,6 +261,39 @@ static zval * php_ev_read_property(zval *object, zval *member, int type, void **
 /* }}} */
 
 /* {{{ php_ev_write_property */
+#if PHP_VERSION_ID >= 70400
+static zval *php_ev_write_property(zval *object, zval *member, zval *value, void **cache_slot)
+{
+	zval                 tmp_member;
+	php_ev_object       *obj;
+	php_ev_prop_handler *hnd = NULL;
+
+	if (Z_TYPE_P(member) != IS_STRING) {
+		ZVAL_COPY(&tmp_member, member);
+		convert_to_string(&tmp_member);
+		member = &tmp_member;
+	}
+
+	obj = Z_EV_OBJECT_P(object);
+
+	if (obj->prop_handler != NULL) {
+	    hnd = zend_hash_find_ptr(obj->prop_handler, Z_STR_P(member));
+	}
+
+	if (hnd) {
+	    hnd->write_func(obj, value);
+	} else {
+	    const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
+	    std_hnd->write_property(object, member, value, cache_slot);
+	}
+
+	if (member == &tmp_member) {
+		zval_dtor(member);
+	}
+
+	return value;
+}
+#else
 static void php_ev_write_property(zval *object, zval *member, zval *value, void **cache_slot)
 {
 	zval                 tmp_member;
@@ -290,6 +323,7 @@ static void php_ev_write_property(zval *object, zval *member, zval *value, void 
 		zval_dtor(member);
 	}
 }
+#endif
 /* }}} */
 
 /* {{{ php_ev_has_property */

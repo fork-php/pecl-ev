@@ -2642,11 +2642,7 @@ evpipe_write (EV_P_ EV_ATOMIC_T *flag)
 #endif
         }
 
-#ifdef _WIN32
-      _set_errno(old_errno);
-#else
       errno = old_errno;
-#endif
     }
 }
 

@@ -39,9 +39,6 @@
 
 #ifdef _WIN32
 
-#include <winsock2.h>
-#include <errno.h>
-
 /* note: the comment below could not be substantiated, but what would I care */
 /* MSDN says this is required to handle SIGFPE */
 /* my wild guess would be that using something floating-pointy is required */
@@ -114,7 +111,7 @@ ev_pipe (int filedes [2])
   if (getsockname (sock [1], (struct sockaddr *)&adr2, &adr2_size))
     goto fail;
 
-  _set_errno(WSAEINVAL);
+  errno = WSAEINVAL;
   if (addr_size != adr2_size
       || addr.sin_addr.s_addr != adr2.sin_addr.s_addr /* just to be sure, I mean, it's windows */
       || addr.sin_port        != adr2.sin_port)
