@@ -77,7 +77,7 @@ int php_ev_set_watcher(ev_watcher *w, int type, zval *zself, zval *zloop, zval *
 
 	pf = &php_ev_watcher_func(w);
 
-	if (php_ev_import_func_info(pf, zcb, error) == FAILURE) {
+	if (php_ev_import_func_info(pf, zcb, error) == FAILURE && error != NULL) {
 		zend_throw_exception_ex(zend_ce_exception, 0, "Invalid callback: %s", error);
 		if (error) {
 			efree(error);
@@ -443,7 +443,7 @@ PHP_METHOD(EvWatcher, setCallback)
 		return;
 	}
 
-	if (php_ev_import_func_info(pf, zcb, error) == FAILURE) {
+	if (php_ev_import_func_info(pf, zcb, error) == FAILURE && error != NULL) {
 		zend_throw_exception_ex(zend_ce_exception, 0, "Invalid callback: %s", error);
 		if (error) {
 			efree(error);
