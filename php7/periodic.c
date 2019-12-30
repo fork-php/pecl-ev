@@ -120,7 +120,7 @@ void php_ev_periodic_object_ctor(INTERNAL_FUNCTION_PARAMETERS, zval *zloop, zend
 	}
 
 	if (reschedule_callback) {
-		if (php_ev_import_func_info(&periodic_ptr->func, reschedule_callback, error) == FAILURE) {
+		if (php_ev_import_func_info(&periodic_ptr->func, reschedule_callback, error) == FAILURE && error != NULL) {
 			zend_throw_exception_ex(zend_ce_exception, 0, "Reschedule callback is invalid: %s", error);
 			if (error) {
 				efree(error);
@@ -185,7 +185,7 @@ PHP_METHOD(EvPeriodic, set)
 
 	/* Reconfigure reschedule_cb */
 	if (EXPECTED(pf->func_ptr)) {
-		if (php_ev_import_func_info(&periodic_ptr->func, callback, error) == FAILURE) {
+		if (php_ev_import_func_info(&periodic_ptr->func, callback, error) == FAILURE && error != NULL) {
 			zend_throw_exception_ex(zend_ce_exception, 0,
 					"Reschedule callback is invalid: %s", error);
 			if (error) {

@@ -1,7 +1,7 @@
 --TEST--
 Check for EvTimer functionality
 --FILE--
-<?php 
+<?php
 //error_reporting(0);
 
 $fudge = 0.02;

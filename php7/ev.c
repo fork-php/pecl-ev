@@ -124,19 +124,19 @@ zend_module_entry ev_module_entry = {
 #elif ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
 #endif
-    "ev",
-    NULL, /* functions */
-    PHP_MINIT(ev),
-    PHP_MSHUTDOWN(ev),
-    PHP_RINIT(ev),
-    NULL, /*PHP_RSHUTDOWN(ev),*/
-    PHP_MINFO(ev),
-    PHP_EV_VERSION,
-    PHP_MODULE_GLOBALS(ev),
-    PHP_GINIT(ev),
-    NULL,
-    NULL,
-    STANDARD_MODULE_PROPERTIES_EX
+	"ev",                       /* extension name */
+	NULL,                       /* extension function list */
+	PHP_MINIT(ev),              /* extension-wide startup */
+	PHP_MSHUTDOWN(ev),          /* extension-wide shutdown */
+	PHP_RINIT(ev),              /* per-request initialization */
+	NULL,                       /* per-request shutdown */
+	PHP_MINFO(ev),              /* php.ini data handler */
+	PHP_EV_VERSION,             /* extension version */
+	PHP_MODULE_GLOBALS(ev),     /* globals descriptor */
+	PHP_GINIT(ev),              /* globals ctor */
+	NULL,                       /* globals dtor */
+	NULL,                       /* post deactivate */
+	STANDARD_MODULE_PROPERTIES_EX
 };
 /* }}} */
 
@@ -170,9 +170,8 @@ zval * php_ev_default_loop()
 		return default_loop_ptr;
 	}
 
-
 	php_ev_object  *ev_obj;
-	struct ev_loop *loop   = ev_default_loop(EVFLAG_AUTO);
+	struct ev_loop *loop = ev_default_loop(EVFLAG_AUTO);
 
 	if (!loop) {
 		php_error_docref(NULL, E_ERROR,
@@ -184,9 +183,13 @@ zval * php_ev_default_loop()
 	object_init_ex(default_loop_ptr, ev_loop_class_entry_ptr);
 	ev_obj = Z_EV_OBJECT_P(default_loop_ptr);
 
-	php_ev_loop *ptr = (php_ev_loop *)ecalloc(1, sizeof(php_ev_loop));
+	php_ev_loop *ptr = ecalloc(1, sizeof(php_ev_loop));
 	ptr->loop = loop;
 	ev_obj->ptr = (void *)ptr;
+	ZVAL_NULL(&ptr->data);
+	ptr->io_collect_interval = 0.0;
+	ptr->timeout_collect_interval = 0.0;
+	ptr->w = NULL;
 
 	ev_set_userdata(loop, (void *)default_loop_ptr);
 
@@ -526,11 +529,7 @@ static void php_ev_watcher_object_dtor(zend_object *object)/*{{{*/
 	PHP_EV_ASSERT(w);
 
 	php_ev_watcher_dtor(w);
-	if (Z_REFCOUNT(php_ev_watcher_self(w)) > 1) {
-		zval_ptr_dtor(&php_ev_watcher_self(w));
-	}
 	php_ev_object_dtor(object);
-
 }
 /*}}}*/
 
@@ -559,6 +558,7 @@ static void php_ev_loop_dtor(php_ev_loop *ptr)/*{{{*/
 
 	if (!Z_ISUNDEF(ptr->data)) {
 		zval_ptr_dtor(&ptr->data);
+		ZVAL_UNDEF(&ptr->data);
 	}
 }
 /*}}}*/
@@ -572,13 +572,15 @@ static void php_ev_loop_object_dtor(zend_object *object)/*{{{*/
 	if (EXPECTED(intern)) {
 		if (ev_is_default_loop(loop_ptr->loop)) {
 			if (!Z_ISUNDEF(MyG(default_loop))) {
-				zval_dtor(&MyG(default_loop));
+				zval_ptr_dtor(&MyG(default_loop));
+				php_ev_loop_dtor((php_ev_loop *)intern->ptr);
+				php_ev_object_dtor(object);
 				ZVAL_UNDEF(&MyG(default_loop));
+				return;
 			}
 		}
-#if 0
+
 		php_ev_loop_dtor((php_ev_loop *)intern->ptr);
-#endif
 	}
 
 	php_ev_object_dtor(object);
@@ -657,11 +659,8 @@ static void php_ev_object_free_storage(zend_object *object)
 {
 	php_ev_object *intern = php_ev_object_fetch_object(object);
 
-	zend_object_std_dtor(&intern->zo);
+	zend_object_std_dtor(object);
 	PHP_EV_EFREE(intern->ptr);
-#if 0
-	OBJ_RELEASE(object);
-#endif
 }
 /* }}} */
 
@@ -685,7 +684,9 @@ static void php_ev_loop_free_storage(zend_object *object)
  * This is a helper for derived watcher class objects. */
 static void php_ev_watcher_free_storage(ev_watcher *ptr)
 {
+#if 0
 	php_ev_watcher_dtor(ptr);
+#endif
 }
 /* }}} */
 
@@ -1279,10 +1280,11 @@ PHP_MSHUTDOWN_FUNCTION(ev)
 
 	zend_hash_destroy(&classes);
 
+	UNREGISTER_INI_ENTRIES();
+
 	return SUCCESS;
 }
 /* }}} */
-
 
 /* {{{ PHP_RINIT_FUNCTION */
 PHP_RINIT_FUNCTION(ev)

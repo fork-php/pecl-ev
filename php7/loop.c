@@ -44,7 +44,7 @@ static void php_ev_loop_object_ctor(INTERNAL_FUNCTION_PARAMETERS, const zend_boo
 			if (!zdefault_loop_ptr) {
 				loop = ev_default_loop(flags);
 			} else {
-				RETURN_ZVAL(zdefault_loop_ptr, 0, 0);
+				RETURN_ZVAL(zdefault_loop_ptr, 1, 0);
 			}
 		} else {
 			loop = ev_loop_new(flags);
