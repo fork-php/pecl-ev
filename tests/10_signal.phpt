@@ -4,6 +4,9 @@ Check for EvSignal functionality
 <?php
 if (!extension_loaded("pcntl")) print "skip pcntl extension is not loaded";
 if (!extension_loaded("posix")) print "skip posix extension is not loaded";
+// With debug builds, zend_signal_deactivate() prints a warning about
+// overridden signal handler regardless of the error_reporting flags.
+if (defined("PHP_DEBUG") && PHP_DEBUG) die('skip not suitable for debug build');
 ?>
 --FILE--
 <?php
