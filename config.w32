@@ -21,7 +21,6 @@ if (PHP_EV != 'no') {
 		ADD_FLAG('CFLAGS_EV', '/D _WIN32');
 
 		ADD_EXTENSION_DEP('ev', 'sockets', true);
-		ADD_FLAG('CFLAGS_EV', '/D PHP_EV_SOCKETS=1');
 
 		if (PHP_EV_DEBUG != 'no') {
 			ADD_FLAG('CFLAGS_EV', '/D PHP_EV_DEBUG=1');

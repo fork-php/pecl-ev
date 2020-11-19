@@ -13,7 +13,7 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2019-12-09</date>
+  <date>2020-11-19</date>
   <!-- Current version -->
   <version>
     <release>1.0.9</release>
@@ -27,6 +27,7 @@
   <notes><![CDATA[
     - Fixed GC issues revealed with PHP 7.4.1
     - Fixed: tests/10_signal.phpt failed with debug build of PHP
+    - Made sockets dependency optional in the Windows build configuration.
   ]]></notes>
   <!-- Contents -->
   <contents>
@@ -152,7 +153,7 @@
   </extsrcrelease>
   <!-- changelog-->
   <changelog>
-    <!--{{{ 1.0.9-beta -->
+    <!--{{{ 1.0.9 -->
     <release>
       <version>
         <release>1.0.9</release>
@@ -166,6 +167,7 @@
       <notes><![CDATA[
     - Fixed GC issues revealed with PHP 7.4.1
     - Fixed: tests/10_signal.phpt failed with debug build of PHP
+    - Made sockets dependency optional in the Windows build configuration.
   ]]></notes>
     </release>
     <!--}}}-->
