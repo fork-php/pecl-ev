@@ -1,7 +1,7 @@
 dnl +----------------------------------------------------------------------+
-dnl | PHP Version 5                                                        |
+dnl | PHP Version 8                                                        |
 dnl +----------------------------------------------------------------------+
-dnl | Copyrght (C) 1997-2013 The PHP Group                                 |
+dnl | Copyrght (C) 1997-2021 The PHP Group                                 |
 dnl +----------------------------------------------------------------------+
 dnl | This source file is subject to version 3.01 of the PHP license,      |
 dnl | that is bundled with this package in the file LICENSE, and is        |
@@ -56,8 +56,17 @@ if test "$PHP_EV" != "no"; then
       subdir=php5
       AC_MSG_RESULT([PHP 5.x])
     ], [
-      subdir=php7
-      AC_MSG_RESULT([PHP 7.x])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <php_version.h>]], [[
+      #if PHP_MAJOR_VERSION > 7
+      # error PHP > 7
+      #endif
+      ]])],[
+        subdir=php7
+        AC_MSG_RESULT([PHP 7.x])
+      ],[
+        subdir=php8
+        AC_MSG_RESULT([PHP 8.x])
+      ])
     ])
     export CPPFLAGS="$OLD_CPPFLAGS"
     PHP_EV_SOURCES="$subdir/evwrap.c $subdir/util.c $subdir/ev.c $subdir/watcher.c $subdir/fe.c $subdir/pe.c"

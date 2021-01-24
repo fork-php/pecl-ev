@@ -27,6 +27,7 @@ tags
 *.out
 *.exp
 Makefile*
+*.loT
 
 tests/*
 !tests/*.phpt
