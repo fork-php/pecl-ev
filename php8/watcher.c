@@ -47,7 +47,7 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		zval  zrevents;
 		ZVAL_LONG(&zrevents, (zend_long)revents);
 
-		zend_call_method(Z_ISUNDEF(pf->obj) ? NULL : &pf->obj, pf->ce, &pf->func_ptr,
+		zend_call_method(Z_ISUNDEF(pf->obj) ? NULL : Z_OBJ_P(&pf->obj), pf->ce, &pf->func_ptr,
 				ZSTR_VAL(pf->func_ptr->common.function_name),
 				ZSTR_LEN(pf->func_ptr->common.function_name),
 				retval, MIN(2, pf->func_ptr->common.num_args),
@@ -406,7 +406,7 @@ PHP_METHOD(EvWatcher, getLoop)
 }
 /* }}} */
 
-/* {{{ proto int EvWatcher::keepalive([bool value = TRUE]) */
+/* {{{ proto bool EvWatcher::keepalive([bool value = TRUE]) */
 PHP_METHOD(EvWatcher, keepalive)
 {
 	ev_watcher *w;

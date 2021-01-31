@@ -40,6 +40,7 @@ static zend_always_inline php_ev_object * php_ev_object_fetch_object(zend_object
 }
 
 #define Z_EV_OBJECT_P(zv) (EXPECTED(zv) ? php_ev_object_fetch_object(Z_OBJ_P(zv)) : NULL)
+#define Z_EV_FETCH_OBJ(pzo) php_ev_object_fetch_object(pzo)
 
 /* php_ev_loop pointer is stored in php_ev_object.ptr struct member */
 typedef struct _php_ev_loop {

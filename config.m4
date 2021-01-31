@@ -69,7 +69,7 @@ if test "$PHP_EV" != "no"; then
       ])
     ])
     export CPPFLAGS="$OLD_CPPFLAGS"
-    PHP_EV_SOURCES="$subdir/evwrap.c $subdir/util.c $subdir/ev.c $subdir/watcher.c $subdir/fe.c $subdir/pe.c"
+    PHP_EV_SOURCES="$subdir/evwrap.c $subdir/util.c $subdir/ev.c $subdir/watcher.c $subdir/pe.c"
   else
     AC_MSG_ERROR([unknown])
   fi

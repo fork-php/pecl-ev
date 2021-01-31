@@ -19,6 +19,8 @@
 #include "php_ev.h"
 #include "util.h"
 
+#include "php_ev_arginfo.h" /* Generated arginfo */
+
 #if HAVE_EV
 
 ZEND_DECLARE_MODULE_GLOBALS(ev)
@@ -228,21 +230,15 @@ static void php_ev_add_property(HashTable *h, const char *name, size_t name_len,
 /* }}} */
 
 /* {{{ php_ev_read_property */
-static zval * php_ev_read_property(zval *object, zval *member, int type, void **cache_slot, zval *rv)
+static zval * php_ev_read_property(zend_object *object, zend_string *member, int type, void **cache_slot, zval *rv)
 {
-	zval                 tmp_member;
 	zval                *retval;
-	php_ev_object       *obj = Z_EV_OBJECT_P(object);
+
+	php_ev_object       *obj = Z_EV_FETCH_OBJ(object);
 	php_ev_prop_handler *hnd = NULL;
 
-	if (Z_TYPE_P(member) != IS_STRING) {
-		ZVAL_COPY(&tmp_member, member);
-		convert_to_string(&tmp_member);
-		member = &tmp_member;
-	}
-
 	if (obj->prop_handler != NULL) {
-		hnd = zend_hash_find_ptr(obj->prop_handler, Z_STR_P(member));
+		hnd = zend_hash_find_ptr(obj->prop_handler, member);
 	}
 
 	if (hnd) {
@@ -255,32 +251,18 @@ static zval * php_ev_read_property(zval *object, zval *member, int type, void **
 		retval = std_hnd->read_property(object, member, type, cache_slot, rv);
 	}
 
-	if (member == &tmp_member) {
-		zval_dtor(&tmp_member);
-	}
-
 	return retval;
 }
 /* }}} */
 
 /* {{{ php_ev_write_property */
-#if PHP_VERSION_ID >= 70400
-static zval *php_ev_write_property(zval *object, zval *member, zval *value, void **cache_slot)
+static zval *php_ev_write_property(zend_object *object, zend_string *member, zval *value, void **cache_slot)
 {
-	zval                 tmp_member;
-	php_ev_object       *obj;
+	php_ev_object       *obj = Z_EV_FETCH_OBJ(object);
 	php_ev_prop_handler *hnd = NULL;
 
-	if (Z_TYPE_P(member) != IS_STRING) {
-		ZVAL_COPY(&tmp_member, member);
-		convert_to_string(&tmp_member);
-		member = &tmp_member;
-	}
-
-	obj = Z_EV_OBJECT_P(object);
-
 	if (obj->prop_handler != NULL) {
-	    hnd = zend_hash_find_ptr(obj->prop_handler, Z_STR_P(member));
+	    hnd = zend_hash_find_ptr(obj->prop_handler, member);
 	}
 
 	if (hnd) {
@@ -288,55 +270,20 @@ static zval *php_ev_write_property(zval *object, zval *member, zval *value, void
 	} else {
 	    const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
 	    std_hnd->write_property(object, member, value, cache_slot);
-	}
-
-	if (member == &tmp_member) {
-		zval_dtor(member);
 	}
 
 	return value;
 }
-#else
-static void php_ev_write_property(zval *object, zval *member, zval *value, void **cache_slot)
-{
-	zval                 tmp_member;
-	php_ev_object       *obj;
-	php_ev_prop_handler *hnd = NULL;
-
-	if (Z_TYPE_P(member) != IS_STRING) {
-		ZVAL_COPY(&tmp_member, member);
-		convert_to_string(&tmp_member);
-		member = &tmp_member;
-	}
-
-	obj = Z_EV_OBJECT_P(object);
-
-	if (obj->prop_handler != NULL) {
-	    hnd = zend_hash_find_ptr(obj->prop_handler, Z_STR_P(member));
-	}
-
-	if (hnd) {
-	    hnd->write_func(obj, value);
-	} else {
-	    const zend_object_handlers *std_hnd = zend_get_std_object_handlers();
-	    std_hnd->write_property(object, member, value, cache_slot);
-	}
-
-	if (member == &tmp_member) {
-		zval_dtor(member);
-	}
-}
-#endif
 /* }}} */
 
 /* {{{ php_ev_has_property */
-static int php_ev_has_property(zval *object, zval *member, int has_set_exists, void **cache_slot)
+static int php_ev_has_property(zend_object *object, zend_string *member, int has_set_exists, void **cache_slot)
 {
-	php_ev_object       *obj = Z_EV_OBJECT_P(object);
+	php_ev_object       *obj = Z_EV_FETCH_OBJ(object);
 	php_ev_prop_handler *p;
 	int                 ret  = 0;
 
-	if ((p = zend_hash_find_ptr(obj->prop_handler, Z_STR_P(member))) != NULL) {
+	if ((p = zend_hash_find_ptr(obj->prop_handler, member)) != NULL) {
 		switch (has_set_exists) {
 			case 2:
 				ret = 1;
@@ -371,10 +318,10 @@ static int php_ev_has_property(zval *object, zval *member, int has_set_exists, v
 } /* }}} */
 
 /* {{{ php_ev_object_get_debug_info */
-static HashTable * php_ev_object_get_debug_info(zval *object, int *is_temp)
+static HashTable * php_ev_object_get_debug_info(zend_object *object, int *is_temp)
 {
-	php_ev_object       *obj = Z_EV_OBJECT_P(object);
-	HashTable           *props   = obj->prop_handler;
+	php_ev_object       *obj = Z_EV_FETCH_OBJ(object);
+	HashTable           *props = obj->prop_handler;
 	HashTable           *retval;
 	php_ev_prop_handler *entry;
 
@@ -385,7 +332,7 @@ static HashTable * php_ev_object_get_debug_info(zval *object, int *is_temp)
 		zval rv, member;
 		zval *value;
 		ZVAL_STR(&member, entry->name);
-		value = php_ev_read_property(object, &member, BP_VAR_IS, 0, &rv);
+		value = php_ev_read_property(object, Z_STR_P(&member), BP_VAR_IS, 0, &rv);
 		if (value != &EG(uninitialized_zval)) {
 			zend_hash_add(retval, Z_STR(member), value);
 		}
@@ -398,9 +345,9 @@ static HashTable * php_ev_object_get_debug_info(zval *object, int *is_temp)
 /* }}} */
 
 /* {{{ php_ev_get_properties */
-static HashTable * php_ev_get_properties(zval *object)
+static HashTable * php_ev_get_properties(zend_object *object)
 {
-	php_ev_object       *obj   = Z_EV_OBJECT_P(object);
+	php_ev_object       *obj   = Z_EV_FETCH_OBJ(object);
 	HashTable           *props = zend_std_get_properties(object);
 	php_ev_prop_handler *hnd;
 	zend_string         *key;
@@ -421,77 +368,31 @@ static HashTable * php_ev_get_properties(zval *object)
 /* }}} */
 
 /* {{{ php_ev_get_gc */
-static HashTable * php_ev_get_gc(zval *object, zval **gc_data, int *gc_count)
+static HashTable * php_ev_get_gc(zend_object *object, zval **gc_data, int *gc_count)
 {
-#if 0
-	php_ev_object *ev_obj = Z_EV_OBJECT_P(object);
-	ev_watcher *w;
-
-	if (EXPECTED(ev_obj)) {
-		w = (ev_watcher *)ev_obj->ptr;
-		PHP_EV_ASSERT(w);
-
-		*gc_data = &php_ev_watcher_self(w);
-		*gc_count = 1;
-	} else {
-		*gc_data = NULL;
-		*gc_count = 0;
-	}
-#else
 	*gc_data = NULL;
 	*gc_count = 0;
-#endif
-
 	return zend_std_get_properties(object);
 }
 /* }}} */
 
-static HashTable * php_ev_loop_get_gc(zval *object, zval **gc_data, int *gc_count)/*{{{*/
+static HashTable * php_ev_loop_get_gc(zend_object *object, zval **gc_data, int *gc_count)/*{{{*/
 {
-#if 0
-	php_ev_loop *loop_ptr;
-	php_ev_object *ev_obj = Z_EV_OBJECT_P(object);
-
-	PHP_EV_ASSERT(ev_obj);
-	if (EXPECTED(ev_obj && ev_obj->ptr)) {
-		loop_ptr = (php_ev_loop *)ev_obj->ptr;
-		if (loop_ptr->loop) {
-			*gc_data = (zval *)ev_userdata(loop_ptr->loop);
-			*gc_count = 1;
-		} else {
-			*gc_data = NULL;
-			*gc_count = 0;
-		}
-	} else {
-		*gc_data = NULL;
-		*gc_count = 0;
-	}
-#else
 	*gc_data = NULL;
 	*gc_count = 0;
-#endif
-
 	return zend_std_get_properties(object);
 }
 /*}}}*/
 
 /* {{{ php_ev_get_property_ptr_ptr */
-static zval * php_ev_get_property_ptr_ptr(zval *object, zval *member, int type, void **cache_slot)
+static zval * php_ev_get_property_ptr_ptr(zend_object *object, zend_string *member, int type, void **cache_slot)
 {
-	php_ev_object       *obj        = Z_EV_OBJECT_P(object);
+	php_ev_object       *obj        = Z_EV_FETCH_OBJ(object);
 	zval                *retval     = NULL;
 	php_ev_prop_handler *hnd        = NULL;
-	zval tmp_member;
-
-	if (Z_TYPE_P(member) != IS_STRING) {
-		ZVAL_COPY(&tmp_member, member);
-		convert_to_string(&tmp_member);
-		member = &tmp_member;
-		cache_slot = NULL;
-	}
 
 	if (obj->prop_handler != NULL) {
-		hnd = zend_hash_find_ptr(obj->prop_handler, Z_STR_P(member));
+		hnd = zend_hash_find_ptr(obj->prop_handler, member);
 	}
 
 	if (hnd && hnd->get_ptr_ptr_func != NULL) {
@@ -505,14 +406,9 @@ static zval * php_ev_get_property_ptr_ptr(zval *object, zval *member, int type, 
 		ZVAL_NULL(retval);
 	}
 
-	if (member == &tmp_member) {
-		zval_dtor(member);
-	}
-
 	return retval;
 }
 /* }}} */
-
 
 static void php_ev_object_dtor(zend_object *object)/*{{{*/
 {
@@ -966,13 +862,13 @@ static inline void php_ev_register_classes()
 	zend_class_entry *ce;
 
 	/* {{{ Ev */
-	PHP_EV_REGISTER_CLASS_ENTRY("Ev", ev_class_entry_ptr, ev_class_entry_functions);
+	PHP_EV_REGISTER_CLASS_ENTRY("Ev", ev_class_entry_ptr, class_Ev_methods);
 	ce = ev_class_entry_ptr;
 	ce->ce_flags |= ZEND_ACC_FINAL;
 	/* }}} */
 
 	/* {{{ EvLoop */
-	PHP_EV_REGISTER_CLASS_ENTRY("EvLoop", ev_loop_class_entry_ptr, ev_loop_class_entry_functions);
+	PHP_EV_REGISTER_CLASS_ENTRY("EvLoop", ev_loop_class_entry_ptr, class_EvLoop_methods);
 	ce = ev_loop_class_entry_ptr;
 	ce->ce_flags |= ZEND_ACC_FINAL;
 	zend_hash_init(&php_ev_properties, 0, NULL, free_prop_handler, 1);
@@ -989,7 +885,7 @@ static inline void php_ev_register_classes()
 	/* }}} */
 
 	/* {{{ EvWatcher */
-	PHP_EV_REGISTER_CLASS_ENTRY("EvWatcher", ev_watcher_class_entry_ptr, ev_watcher_class_entry_functions);
+	PHP_EV_REGISTER_CLASS_ENTRY("EvWatcher", ev_watcher_class_entry_ptr, class_EvWatcher_methods);
 	ce = ev_watcher_class_entry_ptr;
 	ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
 	zend_hash_init(&php_ev_watcher_properties, 0, NULL, free_prop_handler, 1);
@@ -1002,7 +898,7 @@ static inline void php_ev_register_classes()
 	/* }}} */
 
 	/* {{{ EvIo */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvIo", ev_io_class_entry_ptr, ev_io_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvIo", ev_io_class_entry_ptr, class_EvIo_methods, ev_watcher_class_entry_ptr);
 	ce = ev_io_class_entry_ptr;
 	zend_hash_init(&php_ev_io_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_io_properties, ev_io_property_entries);
@@ -1013,7 +909,7 @@ static inline void php_ev_register_classes()
 	/* }}} */
 
 	/* {{{ EvTimer */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvTimer", ev_timer_class_entry_ptr, ev_timer_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvTimer", ev_timer_class_entry_ptr, class_EvTimer_methods, ev_watcher_class_entry_ptr);
 	ce = ev_timer_class_entry_ptr;
 	zend_hash_init(&php_ev_timer_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_timer_properties, ev_timer_property_entries);
@@ -1025,7 +921,7 @@ static inline void php_ev_register_classes()
 
 #if EV_PERIODIC_ENABLE
 	/* {{{ EvPeriodic */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvPeriodic", ev_periodic_class_entry_ptr, ev_periodic_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvPeriodic", ev_periodic_class_entry_ptr, class_EvPeriodic_methods, ev_watcher_class_entry_ptr);
 	ce = ev_periodic_class_entry_ptr;
 	zend_hash_init(&php_ev_periodic_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_periodic_properties, ev_periodic_property_entries);
@@ -1038,7 +934,7 @@ static inline void php_ev_register_classes()
 
 #if EV_SIGNAL_ENABLE
 	/* {{{ EvSignal*/
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvSignal", ev_signal_class_entry_ptr, ev_signal_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvSignal", ev_signal_class_entry_ptr, class_EvSignal_methods, ev_watcher_class_entry_ptr);
 	ce = ev_signal_class_entry_ptr;
 	zend_hash_init(&php_ev_signal_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_signal_properties, ev_signal_property_entries);
@@ -1050,7 +946,7 @@ static inline void php_ev_register_classes()
 
 #if EV_CHILD_ENABLE
 	/* {{{ EvChild*/
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvChild", ev_child_class_entry_ptr, ev_child_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvChild", ev_child_class_entry_ptr, class_EvChild_methods, ev_watcher_class_entry_ptr);
 	ce = ev_child_class_entry_ptr;
 	zend_hash_init(&php_ev_child_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_child_properties, ev_child_property_entries);
@@ -1064,7 +960,7 @@ static inline void php_ev_register_classes()
 
 #if EV_STAT_ENABLE
 	/* {{{ EvStat */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvStat", ev_stat_class_entry_ptr, ev_stat_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvStat", ev_stat_class_entry_ptr, class_EvStat_methods, ev_watcher_class_entry_ptr);
 	ce = ev_stat_class_entry_ptr;
 	zend_hash_init(&php_ev_stat_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_stat_properties, ev_stat_property_entries);
@@ -1077,7 +973,7 @@ static inline void php_ev_register_classes()
 
 #if EV_IDLE_ENABLE
 	/* {{{ EvIdle */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvIdle", ev_idle_class_entry_ptr, ev_idle_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvIdle", ev_idle_class_entry_ptr, class_EvIdle_methods, ev_watcher_class_entry_ptr);
 	ce = ev_idle_class_entry_ptr;
 	zend_hash_add_ptr(&classes, ce->name, &php_ev_watcher_properties);
 	/* }}} */
@@ -1085,7 +981,7 @@ static inline void php_ev_register_classes()
 
 #if EV_CHECK_ENABLE
 	/* {{{ EvCheck */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvCheck", ev_check_class_entry_ptr, ev_check_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvCheck", ev_check_class_entry_ptr, class_EvCheck_methods, ev_watcher_class_entry_ptr);
 	ce = ev_check_class_entry_ptr;
 	zend_hash_add_ptr(&classes, ce->name, &php_ev_watcher_properties);
 	/* }}} */
@@ -1093,7 +989,7 @@ static inline void php_ev_register_classes()
 
 #if EV_PREPARE_ENABLE
 	/* {{{ EvPrepare */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvPrepare", ev_prepare_class_entry_ptr, ev_prepare_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvPrepare", ev_prepare_class_entry_ptr, class_EvPrepare_methods, ev_watcher_class_entry_ptr);
 	ce = ev_prepare_class_entry_ptr;
 	zend_hash_add_ptr(&classes, ce->name, &php_ev_watcher_properties);
 	/* }}} */
@@ -1101,7 +997,7 @@ static inline void php_ev_register_classes()
 
 #if EV_EMBED_ENABLE
 	/* {{{ EvEmbed */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvEmbed", ev_embed_class_entry_ptr, ev_embed_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvEmbed", ev_embed_class_entry_ptr, class_EvEmbed_methods, ev_watcher_class_entry_ptr);
 	ce = ev_embed_class_entry_ptr;
 	zend_hash_init(&php_ev_embed_properties, 0, NULL, free_prop_handler, 1);
 	PHP_EV_ADD_CLASS_PROPERTIES(&php_ev_embed_properties, ev_embed_property_entries);
@@ -1113,7 +1009,7 @@ static inline void php_ev_register_classes()
 
 #if EV_FORK_ENABLE
 	/* {{{ EvFork */
-	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvFork", ev_fork_class_entry_ptr, ev_fork_class_entry_functions, ev_watcher_class_entry_ptr);
+	PHP_EV_REGISTER_CLASS_ENTRY_EX("EvFork", ev_fork_class_entry_ptr, class_EvFork_methods, ev_watcher_class_entry_ptr);
 	ce = ev_fork_class_entry_ptr;
 	zend_hash_add_ptr(&classes, ce->name, &php_ev_watcher_properties);
 	/* }}} */
