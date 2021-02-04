@@ -4,7 +4,7 @@ Check for bug #33
 <?php
 $time_delta = 0.05;
 $time_steps = 10;
-$max_time_diff = 0.008;
+$max_time_diff = 0.1;
 
 $reschedule_cb = function ($watcher, $now) use ($time_delta, $time_steps) {
     static $counter = 0;
