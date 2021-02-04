@@ -68,7 +68,7 @@ $sw = $loop->signal(SIGUSR1, function ($w) {
 posix_kill(posix_getpid(), SIGUSR1);
 $loop->run(Ev::RUN_NOWAIT);
 ?>
---EXPECT--
+--EXPECTF--
 ok 1
 ok 2
 ok 3
@@ -83,4 +83,4 @@ ok 11
 ok 12
 ok 13
 ok 14
-int(10)
+int(%d)
