@@ -13,10 +13,10 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2021-01-31</date>
+  <date>2021-02-04</date>
   <!-- Current version -->
   <version>
-    <release>1.1.0</release>
+    <release>1.1.1</release>
     <api>0.4.0</api>
   </version>
   <stability>
@@ -25,7 +25,8 @@
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    Upgraded to PHP8
+    - Fixed #39: tests/bug33.phpt is slow on s390x
+    - Fixed tests/10_signal.phpt which failed on mips64 Alpinelinux due to a different value of SIGUSR1
   ]]></notes>
   <!-- Contents -->
   <contents>
@@ -181,6 +182,23 @@
   </extsrcrelease>
   <!-- changelog-->
   <changelog>
+    <!--{{{ 1.1.1-beta -->
+    <release>
+      <version>
+        <release>1.1.1</release>
+        <api>0.4.0</api>
+      </version>
+      <stability>
+        <release>beta</release>
+        <api>beta</api>
+      </stability>
+      <license uri="http://www.php.net/license">PHP</license>
+      <notes><![CDATA[
+    - Fixed #39: tests/bug33.phpt is slow on s390x
+    - Fixed tests/10_signal.phpt which failed on mips64 Alpinelinux due to a different value of SIGUSR1
+  ]]></notes>
+    </release>
+    <!--}}}-->
     <!--{{{ 1.1.0-beta -->
     <release>
       <version>
