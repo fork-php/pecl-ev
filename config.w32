@@ -14,6 +14,8 @@ if (PHP_EV != 'no') {
 			configure_module_dirname = configure_module_dirname + "\\php5";
 		} else if (null != dll.match(/^php7/)) {
 			configure_module_dirname = configure_module_dirname + "\\php7";
+		} else if (null != dll.match(/^php8/)) {
+			configure_module_dirname = configure_module_dirname + "\\php8";
 		} else {
 			ERROR("Cannot match any known PHP version with '" + dll + "'");
 		}
