@@ -58,6 +58,13 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 			retval = NULL;
 		}
 		zend_exception_restore();
+
+		if (EG(exception)) {
+			php_error_docref(NULL, E_WARNING,
+					"Stopping %s watcher because of uncaught exception in the callback",
+					ZSTR_VAL(Z_OBJCE_P(&php_ev_watcher_self(watcher))->name));
+			php_ev_stop_watcher(watcher);
+		}
 	}
 }
 /* }}} */

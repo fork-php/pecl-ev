@@ -69,6 +69,13 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		            "An error occurred while invoking the callback");
 		}
 
+		if (EG(exception)) {
+			php_error_docref(NULL, E_WARNING,
+					"Stopping %s watcher because of uncaught exception in the callback",
+					Z_OBJCE_P(self)->name);
+			php_ev_stop_watcher(watcher);
+		}
+
 		zval_ptr_dtor(&self);
 		zval_ptr_dtor(&key2);
 	}
