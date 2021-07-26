@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+    php8test:
+        stdin_open: true
+        image: ruslanosmanov/pecl-ev-php8-test
+        build:
+            context: .
+            dockerfile: php8/Dockerfile
+        command: bash -c './rebuild.sh && NO_INTERACTION=1 ./run-tests.sh'
+    php7test:
+        stdin_open: true
+        image: ruslanosmanov/pecl-ev-php7-test
+        build:
+            context: .
+            dockerfile: php7/Dockerfile
+        command: bash -c './rebuild.sh && NO_INTERACTION=1 ./run-tests.sh'
+    php5test:
+        stdin_open: true
+        image: ruslanosmanov/pecl-ev-php5-test
+        build:
+            context: .
+            dockerfile: php5/Dockerfile
+        command: bash -c './rebuild.sh && NO_INTERACTION=1 ./run-tests.sh'
