@@ -17,7 +17,7 @@ $reschedule_cb = function ($watcher, $now) use ($time_delta, $time_steps) {
     return $now + $time_delta;
 };
 
-$w = new EvPeriodic(null, null, $reschedule_cb, function () {
+$w = new EvPeriodic(0, 0, $reschedule_cb, function () {
     static $counter = 0;
 
     echo ++$counter, PHP_EOL;

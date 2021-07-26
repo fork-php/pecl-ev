@@ -1,9 +1,9 @@
 --TEST--
 Check for EvWatcher object destructors(leaks)
+--INI--
+memory_limit=2M
 --FILE--
 <?php
-ini_set('memory_limit', '1M');
-
 $limit = 100000;
 
 $callback = function() {
