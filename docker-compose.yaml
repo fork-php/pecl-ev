@@ -22,3 +22,10 @@ services:
             context: .
             dockerfile: php5/Dockerfile
         command: bash -c './rebuild.sh && NO_INTERACTION=1 ./run-tests.sh'
+    php5zts-test:
+        stdin_open: true
+        image: ruslanosmanov/pecl-ev-php5-zts-test
+        build:
+            context: .
+            dockerfile: php5/Dockerfile.zts
+        command: bash -c './rebuild.sh && NO_INTERACTION=1 ./run-tests.sh'

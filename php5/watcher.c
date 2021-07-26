@@ -70,10 +70,10 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		}
 
 		if (EG(exception)) {
-			php_error_docref(NULL, E_WARNING,
+			php_error_docref(NULL TSRMLS_CC, E_WARNING,
 					"Stopping %s watcher because of uncaught exception in the callback",
 					Z_OBJCE_P(self)->name);
-			php_ev_stop_watcher(watcher);
+			php_ev_stop_watcher(watcher TSRMLS_CC);
 		}
 
 		zval_ptr_dtor(&self);
