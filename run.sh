@@ -1,4 +1,5 @@
 #!/bin/bash -
+set -x
 sockets_so_path="$(php-config --extension-dir)/sockets.so"
 sockets_option=
 if [ -e "$sockets_so_path" ]; then
