@@ -13,11 +13,11 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2021-07-26</date>
+  <date>2021-08-15</date>
   <!-- Current version -->
   <version>
-    <release>1.1.4</release>
-    <api>0.4.1</api>
+    <release>1.1.5</release>
+    <api>0.4.2</api>
   </version>
   <stability>
     <release>stable</release>
@@ -25,7 +25,7 @@
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    Fixed tests with PHP versions 8.1.0beta (both NTS and ZTS) and 5 ZTS. Thanks to Remi Collet.
+    Fixed #44: segmentation fault when the watcher is destroyed in its callback and an exception is thrown.
   ]]></notes>
   <!-- Contents -->
   <contents>
@@ -185,6 +185,22 @@
   </extsrcrelease>
   <!-- changelog-->
   <changelog>
+    <!--{{{ 1.1.5-->
+    <release>
+      <version>
+        <release>1.1.5</release>
+        <api>0.4.2</api>
+      </version>
+      <stability>
+        <release>stable</release>
+        <api>stable</api>
+      </stability>
+      <license uri="http://www.php.net/license">PHP</license>
+      <notes><![CDATA[
+    Fixed #44: segmentation fault when the watcher is destroyed in its callback and an exception is thrown.
+  ]]></notes>
+    </release>
+    <!--}}}-->
     <!--{{{ 1.1.4 -->
     <release>
       <version>
