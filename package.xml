@@ -142,6 +142,8 @@
         <file role="src" name="bug33.phpt"/>
         <file role="src" name="bug43-uncaught-exception.phpt"/>
         <file role="src" name="bug43-uncaught-exception.php5.phpt"/>
+        <file role="src" name="bug44-uncaught-exception.php5.phpt"/>
+        <file role="src" name="bug44-uncaught-exception.phpt"/>
         <file role="src" name="bug64788.phpt"/>
         <file role="src" name="13_watcher_data.phpt"/>
         <file role="src" name="14_get_gc.phpt"/>

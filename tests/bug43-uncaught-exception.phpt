@@ -14,5 +14,5 @@ try {
 }
 ?>
 --EXPECTF--
-Warning: Ev::run(): Stopping EvTimer watcher because of uncaught exception in the callback in %s on line %d
+Warning: Ev::run(): Stopping event loop because of uncaught exception in the callback in %s on line %d
 Caught RuntimeException: Test

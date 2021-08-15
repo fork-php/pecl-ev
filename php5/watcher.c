@@ -45,6 +45,8 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 
 		PHP_EV_EXIT_LOOP(EV_A);
 	} else if (EXPECTED(ZEND_FCI_INITIALIZED(*pfci))) {
+		ev_loop *loop = php_ev_watcher_loop(watcher)->loop;
+
 		/* Setup callback args */
 		args[0] = &self;
 		Z_ADDREF_P(self);
@@ -70,10 +72,9 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		}
 
 		if (EG(exception)) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING,
-					"Stopping %s watcher because of uncaught exception in the callback",
-					Z_OBJCE_P(self)->name);
-			php_ev_stop_watcher(watcher TSRMLS_CC);
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Stopping event loop because of uncaught exception in the callback");
+			PHP_EV_ASSERT(loop);
+			ev_break(loop, EVBREAK_ONE);
 		}
 
 		zval_ptr_dtor(&self);

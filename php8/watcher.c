@@ -43,6 +43,7 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 
 	if (EXPECTED(pf->func_ptr)) {
 		zval *retval   = NULL;
+		ev_loop *loop = php_ev_watcher_loop(watcher)->loop;
 
 		zval  zrevents;
 		ZVAL_LONG(&zrevents, (zend_long)revents);
@@ -59,11 +60,10 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		}
 		zend_exception_restore();
 
-		if (EG(exception)) {
-			php_error_docref(NULL, E_WARNING,
-					"Stopping %s watcher because of uncaught exception in the callback",
-					ZSTR_VAL(Z_OBJCE_P(&php_ev_watcher_self(watcher))->name));
-			php_ev_stop_watcher(watcher);
+		if (UNEXPECTED(EG(exception))) {
+			php_error_docref(NULL, E_WARNING, "Stopping event loop because of uncaught exception in the callback");
+			PHP_EV_ASSERT(loop);
+			ev_break(loop, EVBREAK_ONE);
 		}
 	}
 }
