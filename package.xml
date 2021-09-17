@@ -16,7 +16,7 @@
   <date>2021-09-17</date>
   <!-- Current version -->
   <version>
-    <release>1.1.6</release>
+    <release>1.1.5</release>
     <api>0.4.2</api>
   </version>
   <stability>
@@ -25,6 +25,7 @@
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
+    Fixed #44: segmentation fault when the watcher is destroyed in its callback and an exception is thrown.
     Issue #40: Fixed PHP 8 Windows build: the list of source files in config.w32 was incorrect for PHP 8.
   ]]></notes>
   <!-- Contents -->
@@ -185,10 +186,10 @@
   </extsrcrelease>
   <!-- changelog-->
   <changelog>
-    <!--{{{ 1.1.6-->
+    <!--{{{ 1.1.5-->
     <release>
       <version>
-        <release>1.1.6</release>
+        <release>1.1.5</release>
         <api>0.4.2</api>
       </version>
       <stability>
