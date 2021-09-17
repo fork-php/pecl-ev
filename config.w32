@@ -1,5 +1,5 @@
 // $Id$
-// vim:ft=javascript
+// vim:ft=javascript noet ts=4 sts=4 sw=4
 
 ARG_WITH('ev', 'for ev support', 'no');
 ARG_ENABLE('ev_debug', 'for ev debug support', 'no');
@@ -7,6 +7,7 @@ ARG_ENABLE('ev_debug', 'for ev debug support', 'no');
 if (PHP_EV != 'no') {
 	if (CHECK_HEADER_ADD_INCLUDE('ev.h', 'CFLAGS_EV', configure_module_dirname + '\\libev;' + PHP_EV)) {
 		var dll = get_define('PHPDLL');
+		var php_ev_sources = 'ev.c util.c watcher.c fe.c pe.c evwrap.c';
 
 		/* XXX override configure_module_dirname, define the basic extension, then set it back*/
 		var old_conf_dir = configure_module_dirname;
@@ -16,6 +17,7 @@ if (PHP_EV != 'no') {
 			configure_module_dirname = configure_module_dirname + "\\php7";
 		} else if (null != dll.match(/^php8/)) {
 			configure_module_dirname = configure_module_dirname + "\\php8";
+			php_ev_sources='evwrap.c util.c ev.c watcher.c pe.c';
 		} else {
 			ERROR("Cannot match any known PHP version with '" + dll + "'");
 		}
@@ -30,7 +32,7 @@ if (PHP_EV != 'no') {
 			ADD_FLAG('CFLAGS_EV', '/D NDEBUG');
 		}
 
-		EXTENSION('ev', 'ev.c util.c watcher.c fe.c pe.c evwrap.c', true, ' /DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+		EXTENSION('ev', php_ev_sources, true, ' /DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
 		CHECK_HEADER_ADD_INCLUDE('embed.h', 'CFLAGS_EV', configure_module_dirname);
 		configure_module_dirname = old_conf_dir;
 		//ADD_SOURCES(configure_module_dirname, 'evwrap.c', 'ev');
