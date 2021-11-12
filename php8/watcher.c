@@ -63,7 +63,7 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		if (UNEXPECTED(EG(exception))) {
 #if PHP_VERSION_ID >= 80100
 			zend_bool warn = !(zend_is_unwind_exit(EG(exception)) || zend_is_graceful_exit(EG(exception)));
-#elif PHP_VERSION_ID >= 80000
+#else
 			zend_bool warn = !zend_is_unwind_exit(EG(exception));
 #endif
 			if (warn) {
