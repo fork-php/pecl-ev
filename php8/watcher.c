@@ -61,7 +61,14 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 		zend_exception_restore();
 
 		if (UNEXPECTED(EG(exception))) {
-			php_error_docref(NULL, E_WARNING, "Stopping event loop because of uncaught exception in the callback");
+#if PHP_VERSION_ID >= 80100
+			zend_bool warn = !(zend_is_unwind_exit(EG(exception)) || zend_is_graceful_exit(EG(exception)));
+#elif PHP_VERSION_ID >= 80000
+			zend_bool warn = !zend_is_unwind_exit(EG(exception));
+#endif
+			if (warn) {
+				php_error_docref(NULL, E_WARNING, "Stopping event loop because of uncaught exception in the callback");
+			}
 			PHP_EV_ASSERT(loop);
 			ev_break(loop, EVBREAK_ONE);
 		}
