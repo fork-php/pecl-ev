@@ -13,20 +13,19 @@
     <email>osmanov@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2021-09-17</date>
+  <date>2021-11-13</date>
   <!-- Current version -->
   <version>
-    <release>1.1.5</release>
-    <api>0.4.2</api>
+    <release>1.1.6RC1</release>
+    <api>0.4.3</api>
   </version>
   <stability>
-    <release>stable</release>
-    <api>stable</api>
+    <release>beta</release>
+    <api>beta</api>
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    Fixed #44: segmentation fault when the watcher is destroyed in its callback and an exception is thrown.
-    Issue #40: Fixed PHP 8 Windows build: the list of source files in config.w32 was incorrect for PHP 8.
+    Suppressed warnings for UnwindExit and GracefulExit in PHP 8. Thanks to Aaron Piotrowski.
   ]]></notes>
   <!-- Contents -->
   <contents>
@@ -150,6 +149,8 @@
         <file role="src" name="14_get_gc.phpt"/>
         <file role="src" name="15_periodic.phpt"/>
         <file role="src" name="16_generator_cb.phpt"/>
+        <file role="src" name="17_exit_in_watcher.phpt"/>
+        <file role="src" name="18_fiber_in_loop_watcher_destroyed.phpt"/>
       </dir>
       <dir name="libev">
         <file role="doc" name="LICENSE"/>
@@ -186,6 +187,22 @@
   </extsrcrelease>
   <!-- changelog-->
   <changelog>
+    <!--{{{ 1.1.6RC1 -->
+    <release>
+      <version>
+        <release>1.1.6RC1</release>
+        <api>0.4.3</api>
+      </version>
+      <stability>
+        <release>beta</release>
+        <api>beta</api>
+      </stability>
+      <license uri="http://www.php.net/license">PHP</license>
+      <notes><![CDATA[
+    Suppressed warnings for UnwindExit and GracefulExit in PHP 8. Thanks to Aaron Piotrowski.
+  ]]></notes>
+    </release>
+    <!--}}}-->
     <!--{{{ 1.1.5-->
     <release>
       <version>
@@ -250,7 +267,7 @@
   ]]></notes>
     </release>
     <!--}}}-->
-      <!--{{{ 1.1.2 -->
+    <!--{{{ 1.1.2 -->
     <release>
       <version>
         <release>1.1.2</release>
