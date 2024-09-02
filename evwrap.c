@@ -6,4 +6,4 @@
 # define errno (*_errno())
 #endif
 
-#include "../libev/ev.c"
+#include "./libev/ev.c"

@@ -6,22 +6,4 @@ services:
         image: ruslanosmanov/pecl-ev-php8-test
         build:
             context: .
-            dockerfile: php8/Dockerfile
-    php7test:
-        stdin_open: true
-        image: ruslanosmanov/pecl-ev-php7-test
-        build:
-            context: .
-            dockerfile: php7/Dockerfile
-    php5test:
-        stdin_open: true
-        image: ruslanosmanov/pecl-ev-php5-test
-        build:
-            context: .
-            dockerfile: php5/Dockerfile
-    php5zts-test:
-        stdin_open: true
-        image: ruslanosmanov/pecl-ev-php5-zts-test
-        build:
-            context: .
-            dockerfile: php5/Dockerfile.zts
+            dockerfile: Dockerfile

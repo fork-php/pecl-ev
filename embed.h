@@ -64,7 +64,7 @@
 	zval                  self;                                                              \
 	zval                  data;      /* custom var attached by user */
 
-#include "../libev/ev.h"
+#include "./libev/ev.h"
 
 /*
  * TODO: consider refactoring of embed.h and types.h.

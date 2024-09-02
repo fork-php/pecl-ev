@@ -28,6 +28,7 @@ tags
 *.exp
 Makefile*
 *.loT
+*.dep
 
 tests/*
 !tests/*.phpt

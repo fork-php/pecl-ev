@@ -1,7 +1,7 @@
 dnl +----------------------------------------------------------------------+
 dnl | PHP Version 8                                                        |
 dnl +----------------------------------------------------------------------+
-dnl | Copyrght (C) 1997-2021 The PHP Group                                 |
+dnl | Copyrght (C) 1997-2024 The PHP Group                                 |
 dnl +----------------------------------------------------------------------+
 dnl | This source file is subject to version 3.01 of the PHP license,      |
 dnl | that is bundled with this package in the file LICENSE, and is        |
@@ -27,55 +27,20 @@ if test "$PHP_EV" != "no"; then
     if test -z "$PHP_CONFIG"; then
       AC_MSG_ERROR([php-config not found])
     fi
-    PHP_EV_VERSION_ORIG=`$PHP_CONFIG --version`;
+    PHP_EV_VERSION_ORIG="$($PHP_CONFIG --version)";
   else
-    PHP_EV_VERSION_ORIG=$tmp_php_version
+    PHP_EV_VERSION_ORIG="$tmp_php_version"
   fi
 
-  if test -z $PHP_EV_VERSION_ORIG; then
+  if test -z "$PHP_EV_VERSION_ORIG"; then
     AC_MSG_ERROR([failed to detect PHP version, please file a bug])
   fi
 
-  PHP_EV_VERSION_MASK=`echo ${PHP_EV_VERSION_ORIG} | $AWK 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-  if test $PHP_EV_VERSION_MASK -lt 5004000; then
+  PHP_EV_VERSION_MASK="$(echo ${PHP_EV_VERSION_ORIG} | $AWK 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}')"
+  if test "$PHP_EV_VERSION_MASK" -lt 5004000; then
     AC_MSG_ERROR([need at least PHP 5.4.0])
   else
     AC_MSG_RESULT([ok])
-  fi
-
-  AC_MSG_CHECKING(PHP version)
-  if test -d $abs_srcdir/php7; then
-    dnl # only for PECL, not for PHP
-    export OLD_CPPFLAGS="$CPPFLAGS"
-    export CPPFLAGS="$CPPFLAGS $INCLUDES"
-    AC_TRY_COMPILE([#include <php_version.h>], [
-      #if PHP_MAJOR_VERSION > 5
-      # error PHP > 5
-      #endif
-    ], [
-      subdir=php5
-      AC_MSG_RESULT([PHP 5.x])
-    ], [
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <php_version.h>]], [[
-      #if PHP_MAJOR_VERSION > 7
-      # error PHP > 7
-      #endif
-      ]])],[
-        subdir=php7
-        AC_MSG_RESULT([PHP 7.x])
-      ],[
-        subdir=php8
-        AC_MSG_RESULT([PHP 8.x])
-      ])
-    ])
-    export CPPFLAGS="$OLD_CPPFLAGS"
-    if test "$subdir" = "php8"; then
-      PHP_EV_SOURCES="$subdir/evwrap.c $subdir/util.c $subdir/ev.c $subdir/watcher.c $subdir/pe.c"
-    else
-      PHP_EV_SOURCES="$subdir/evwrap.c $subdir/util.c $subdir/ev.c $subdir/watcher.c $subdir/fe.c $subdir/pe.c"
-    fi
-  else
-    AC_MSG_ERROR([unknown])
   fi
 
   AC_DEFINE(HAVE_EV, 1, [ ])
@@ -100,17 +65,10 @@ if test "$PHP_EV" != "no"; then
 
   PHP_EV_CFLAGS="-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -I@ext_srcdir@/libev $PHP_EV_CFLAGS"
 
+  PHP_EV_SOURCES="evwrap.c util.c ev.c watcher.c pe.c"
   PHP_NEW_EXTENSION(ev, $PHP_EV_SOURCES, $ext_shared, cli, $PHP_EV_CFLAGS)
 
   PHP_ADD_BUILD_DIR($ext_builddir/libev)
 
-  if test -n "$subdir"; then
-    PHP_ADD_BUILD_DIR($abs_builddir/$subdir, 1)
-    PHP_ADD_INCLUDE([$ext_srcdir/$subdir])
-  fi
-
   PHP_ADD_MAKEFILE_FRAGMENT
 fi
-
-dnl vim: ft=m4.sh fdm=marker cms=dnl\ %s
-dnl vim: et ts=2 sts=2 sw=2
