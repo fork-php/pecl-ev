@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 8                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2021 The PHP Group                                |
+   | Copyright (c) 1997-2024 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -49,7 +49,7 @@ ZEND_EXTERN_MODULE_GLOBALS(ev)
 extern zend_module_entry ev_module_entry;
 #define phpext_ev_ptr &ev_module_entry
 
-#define PHP_EV_VERSION "1.1.6RC1"
+#define PHP_EV_VERSION "1.2.0"
 
 #endif /* PHP_EV_H */
 /*
