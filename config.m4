@@ -37,8 +37,8 @@ if test "$PHP_EV" != "no"; then
   fi
 
   PHP_EV_VERSION_MASK="$(echo ${PHP_EV_VERSION_ORIG} | $AWK 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}')"
-  if test "$PHP_EV_VERSION_MASK" -lt 5004000; then
-    AC_MSG_ERROR([need at least PHP 5.4.0])
+  if test "$PHP_EV_VERSION_MASK" -lt 8000000; then
+    AC_MSG_ERROR([need at least PHP 8.0.0])
   else
     AC_MSG_RESULT([ok])
   fi
