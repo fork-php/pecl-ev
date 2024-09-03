@@ -25,9 +25,13 @@
   </stability>
   <license uri="http://www.php.net/license">PHP</license>
   <notes><![CDATA[
-    - Support for PHP versions older than 8 has been dropped.
-    - Fixed #51: Building statically with PHP 8.3.10 fails with "unknown" PHP version.
-  ]]></notes>
+  - Support for PHP versions older than 8 has been dropped. Maintaining compatibility
+    with multiple PHP versions (5, 7, and 8) has become increasingly difficult.
+    Recent changes in PHP 8.3 have further complicated the build scripts. Additionally,
+    as PHP releases older than 8.1 are now officially unsupported, it has become
+    challenging to continue supporting PHP 5 and 7.
+  - Fixed #51: Building statically with PHP 8.3.10 fails with an "unknown" PHP version.
+]]></notes>
   <!-- Contents -->
   <contents>
     <dir name="/">
@@ -137,8 +141,12 @@
       </stability>
       <license uri="http://www.php.net/license">PHP</license>
       <notes><![CDATA[
-    - Support for PHP versions older than 8 has been dropped.
-    - Fixed #51: Building statically with PHP 8.3.10 fails with "unknown" PHP version.
+  - Support for PHP versions older than 8 has been dropped. Maintaining compatibility
+    with multiple PHP versions (5, 7, and 8) has become increasingly difficult.
+    Recent changes in PHP 8.3 have further complicated the build scripts. Additionally,
+    as PHP releases older than 8.1 are now officially unsupported, it has become
+    challenging to continue supporting PHP 5 and 7.
+  - Fixed #51: Building statically with PHP 8.3.10 fails with an "unknown" PHP version.
   ]]></notes>
     </release>
     <!--}}}-->
