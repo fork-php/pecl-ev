@@ -24,8 +24,9 @@ and then hand it over to libev by starting the watcher.
 For details refer to the libev's homepage:
 <http://pod.tst.eu/http://cvs.schmorp.de/libev/ev.pod#EMBEDDING>
 
-For installation instructions see file named INSTALL.
+For general installation instructions see file named INSTALL.
 
+Alternatively, the extension can be installed using [Packagist.org](https://packagist.org/packages/osmanov/pecl-ev).
 
 LIBEV IS EMBEDDED
 -----------------

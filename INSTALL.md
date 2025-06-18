@@ -4,8 +4,8 @@ INSTALLATION OF EV PECL EXTENSION
 Currently GNU/Linux platforms supported only.
 
 
-AUTOMATIC INSTALLATION
-----------------------
+AUTOMATIC INSTALLATION USING THE pecl COMMAND
+---------------------------------------------
 
 To download and install ev automatically you need the following commands
 
@@ -23,6 +23,11 @@ Note, these commands(started with `#`) most likely need root priveleges.
 
 libev is embedded in ev. So you don't need to install the library separately.
 
+
+AUTOMATIC INSTALLATION USING PACKAGIST.ORG
+------------------------------------------
+
+Please refer to the [extension's page on Packagist.org](https://packagist.org/packages/osmanov/pecl-ev).
 
 MANUAL INSTALLATION
 -------------------
