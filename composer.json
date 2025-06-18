@@ -7,6 +7,13 @@
         "php": ">= 8.0.0"
     },
     "php-ext": {
-        "extension-name": "ev"
+        "extension-name": "ev",
+        "configure-options": [
+            {
+                "name": "enable-ev-debug",
+                "description": "Enable ev debug support",
+                "needs-value": false
+            }
+        ]
     }
 }
