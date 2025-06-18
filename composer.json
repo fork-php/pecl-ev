@@ -1,0 +1,19 @@
+{
+    "name": "osmanov/pecl-ev",
+    "type": "php-ext",
+    "license": "PHP-3.01",
+    "description": "PECL extension providing interface to libev library",
+    "require": {
+        "php": ">= 8.0.0"
+    },
+    "php-ext": {
+        "extension-name": "ev",
+        "configure-options": [
+            {
+                "name": "enable-ev-debug",
+                "description": "Enable ev debug support",
+                "needs-value": false
+            }
+        ]
+    }
+}
