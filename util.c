@@ -34,7 +34,7 @@ php_socket_t php_ev_zval_to_fd(zval *pfd)
 		/* PHP stream or PHP socket resource  */
 		if ((stream = (php_stream *)zend_fetch_resource2(Z_RES_P(pfd), NULL, php_file_le_stream(), php_file_le_pstream())) != NULL) {
 			if (php_stream_is(stream, PHP_STREAM_IS_MEMORY) || php_stream_is(stream, PHP_STREAM_IS_TEMP)) {
-				zend_throw_exception(zend_exception_get_default(),
+				zend_throw_exception(zend_ce_exception,
 						"Cannot fetch file descriptor from memory based stream", 0);
 				return -1;
 			}
@@ -42,7 +42,7 @@ php_socket_t php_ev_zval_to_fd(zval *pfd)
 			php_stream_from_zval_no_verify(stream, pfd);
 
 			if (stream == NULL) {
-				zend_throw_exception(zend_exception_get_default(), "Stream resource is invalid", 0);
+				zend_throw_exception(zend_ce_exception, "Stream resource is invalid", 0);
 				return -1;
 			}
 
@@ -88,11 +88,11 @@ php_socket_t php_ev_zval_to_fd(zval *pfd)
 		/* Numeric fd */
 		file_desc = Z_LVAL_P(pfd);
 		if (file_desc < 0) {
-			zend_throw_exception(zend_exception_get_default(), "Invalid file descriptor", 0);
+			zend_throw_exception(zend_ce_exception, "Invalid file descriptor", 0);
 			return -1;
 		}
 	} else {
-		zend_throw_exception(zend_exception_get_default(), "Invalid file descriptor", 0);
+		zend_throw_exception(zend_ce_exception, "Invalid file descriptor", 0);
 		return -1;
 	}
 
