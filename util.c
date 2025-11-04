@@ -47,18 +47,18 @@ php_socket_t php_ev_zval_to_fd(zval *pfd)
 			}
 
 			/* PHP stream */
-			if (php_stream_can_cast(stream, PHP_STREAM_AS_FD_FOR_SELECT) == SUCCESS) {
-				if (php_stream_cast(stream, PHP_STREAM_AS_FD_FOR_SELECT,
+			if (php_stream_can_cast(stream, PHP_STREAM_AS_FD_FOR_SELECT | PHP_STREAM_CAST_INTERNAL) == SUCCESS) {
+				if (php_stream_cast(stream, PHP_STREAM_AS_FD_FOR_SELECT | PHP_STREAM_CAST_INTERNAL,
 							(void *) &file_desc, 1) != SUCCESS || file_desc < 0) {
 					return -1;
 				}
-			} else if (php_stream_can_cast(stream, PHP_STREAM_AS_FD) == SUCCESS) {
-				if (php_stream_cast(stream, PHP_STREAM_AS_FD,
+			} else if (php_stream_can_cast(stream, PHP_STREAM_AS_FD | PHP_STREAM_CAST_INTERNAL) == SUCCESS) {
+				if (php_stream_cast(stream, PHP_STREAM_AS_FD | PHP_STREAM_CAST_INTERNAL,
 							(void *) &file_desc, 1) != SUCCESS || file_desc < 0) {
 					return -1;
 				}
-			} else if (php_stream_can_cast(stream, PHP_STREAM_AS_STDIO) == SUCCESS) {
-				if (php_stream_cast(stream, PHP_STREAM_AS_STDIO,
+			} else if (php_stream_can_cast(stream, PHP_STREAM_AS_STDIO | PHP_STREAM_CAST_INTERNAL) == SUCCESS) {
+				if (php_stream_cast(stream, PHP_STREAM_AS_STDIO | PHP_STREAM_CAST_INTERNAL,
 							(void *) &file_desc, 1) != SUCCESS || file_desc < 0) {
 					return -1;
 				}
