@@ -31,13 +31,13 @@ PHP_MINFO_FUNCTION(ev);
 
 /* Max. signum supported */
 #ifndef EV_NSIG
-# define EV_NSIG 32
+#define EV_NSIG 32
 #endif
 
 ZEND_BEGIN_MODULE_GLOBALS(ev)
-	zval default_loop;
-	/* Helps to prevent binding of different `signum's to a loop */
-	struct ev_loop *signal_loops[EV_NSIG - 1];
+zval default_loop;
+/* Helps to prevent binding of different `signum's to a loop */
+struct ev_loop *signal_loops[EV_NSIG - 1];
 ZEND_END_MODULE_GLOBALS(ev)
 
 #if defined(ZTS) && defined(COMPILE_DL_EV)
@@ -49,7 +49,7 @@ ZEND_EXTERN_MODULE_GLOBALS(ev)
 extern zend_module_entry ev_module_entry;
 #define phpext_ev_ptr &ev_module_entry
 
-#define PHP_EV_VERSION "1.2.2"
+#define PHP_EV_VERSION "1.2.3"
 
 #endif /* PHP_EV_H */
 /*
