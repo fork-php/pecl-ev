@@ -21,6 +21,14 @@
 #include "common.h"
 #include "types.h"
 
+/* Define NDEBUG only when neither PHP_EV_DEBUG nor ZEND_DEBUG are enabled.
+ * This prevents conflicts with PHP 8.5.2+ which enforces that NDEBUG must
+ * not be defined when ZEND_DEBUG is enabled. Now that php.h has been included
+ * via common.h, we can safely check ZEND_DEBUG. */
+#if !defined(PHP_EV_DEBUG) && !defined(ZEND_DEBUG)
+# define NDEBUG
+#endif
+
 #define EV_MULTIPLICITY 1
 #define EV_COMPAT3      0
 #define EV_MINPRI       -2

@@ -48,8 +48,6 @@ if test "$PHP_EV" != "no"; then
   if test "$PHP_EV_DEBUG" != "no"; then
     PHP_EV_CFLAGS="$PHP_EV_CFLAGS -Wall -g -ggdb -O0"
     AC_DEFINE(PHP_EV_DEBUG, 1, [Enable ev debug support])
-  else
-    AC_DEFINE(NDEBUG, 1, [With NDEBUG defined assert generates no code])
   fi
 
   PHP_ADD_EXTENSION_DEP(ev, sockets, true)
