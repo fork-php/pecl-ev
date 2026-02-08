@@ -53,12 +53,16 @@ void php_ev_watcher_callback(EV_P_ ev_watcher *watcher, int revents)
 				ZSTR_LEN(pf->func_ptr->common.function_name),
 				retval, MIN(2, pf->func_ptr->common.num_args),
 				&php_ev_watcher_self(watcher), &zrevents);
+#if PHP_VERSION_ID < 80600
 		zend_exception_save();
+#endif
 		if (retval) {
 			zval_ptr_dtor(retval);
 			retval = NULL;
 		}
+#if PHP_VERSION_ID < 80600
 		zend_exception_restore();
+#endif
 
 		if (UNEXPECTED(EG(exception))) {
 #if PHP_VERSION_ID >= 80100
